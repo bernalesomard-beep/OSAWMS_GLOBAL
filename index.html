@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html class="light" lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Panel Unificado — Acceso</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+tailwind.config = {
+  darkMode: "class",
+  theme: {
+    extend: {
+      "colors": {
+        "secondary": "#4f6074", "on-error": "#ffffff", "surface-tint": "#006688",
+        "surface-container-lowest": "#ffffff", "error-container": "#ffdad6",
+        "on-tertiary-container": "#323f44", "error": "#ba1a1a",
+        "surface-bright": "#f8f9ff", "surface": "#f8f9ff", "surface-container-low": "#eff4ff",
+        "outline-variant": "#bdc8d0", "on-tertiary": "#ffffff", "surface-container": "#e5eeff",
+        "outline": "#6e7980", "surface-variant": "#d3e4fe", "on-secondary": "#ffffff",
+        "primary-container": "#34b3e8", "surface-container-high": "#dce9ff",
+        "surface-container-highest": "#d3e4fe", "on-error-container": "#93000a",
+        "on-background": "#0b1c30", "on-primary": "#ffffff", "primary": "#006688",
+        "background": "#f8f9ff", "on-primary-container": "#00425a", "on-surface": "#0b1c30",
+        "on-surface-variant": "#3e484f"
+      },
+      "borderRadius": { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem" },
+      "spacing": { "stack-sm": "0.5rem", "gutter": "1.5rem", "margin-desktop": "2rem", "stack-md": "1.5rem" },
+      "fontFamily": { "headline-lg": ["Hanken Grotesk"], "body-md": ["Inter"], "label-md": ["Inter"], "label-sm": ["Inter"] },
+      "fontSize": {
+        "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+        "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600"}],
+        "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "500"}]
+      }
+    }
+  }
+}
+</script>
+<style>
+  body {
+    background-color: #f8f9ff;
+    background-image:
+      radial-gradient(circle at 100% 0%, #e5eeff 0%, transparent 25%),
+      radial-gradient(circle at 0% 100%, #d2e4fc 0%, transparent 25%);
+    min-height: 100vh;
+  }
+  .login-card { background: #ffffff; border: 1px solid rgba(110, 121, 128, 0.2); width: 100%; max-width: 620px; }
+  .input-focus-ring:focus-within { border-color: #34b3e8; border-width: 2px; }
+  .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; vertical-align: middle; }
+
+  #hub-app { display:none; height:100vh; width:100vw; overflow:hidden; }
+  #hub-app.show { display:flex; }
+  #login-screen.hide, #login-footer.hide { display:none; }
+
+  #hub-sidebar { width:90px; flex-shrink:0; background:#F1F4FA; border-right:1px solid #C1C6D6; display:flex; flex-direction:column; align-items:stretch; padding-top:14px; }
+  .hub-brand { text-align:center; padding:0 8px 14px 8px; border-bottom:1px solid #C1C6D6; margin-bottom:6px; }
+  .hub-brand .dot { width:10px;height:10px;border-radius:50%;background:#FDBC13; margin:0 auto 6px auto; }
+  .hub-brand span { color:#005BBF; font-size:9.5px; font-weight:700; letter-spacing:.04em; }
+  .hub-user-tag { text-align:center; padding:6px 4px 10px 4px; border-bottom:1px solid #C1C6D6; margin-bottom:6px; }
+  .hub-user-tag .name { font-size:10px; font-weight:700; color:#181C20; word-break:break-word; }
+  .hub-user-tag .role { font-size:8.5px; color:#727785; text-transform:uppercase; letter-spacing:.03em; }
+
+  .hub-nav-item { display:flex; flex-direction:column; align-items:center; gap:6px; padding:13px 6px; cursor:pointer; color:#414754; text-align:center; border-left:3px solid transparent; transition: all .15s ease; }
+  .hub-nav-item:hover { background:#E5E8EE; color:#181C20; }
+  .hub-nav-item.active { color:#00723D; border-left:3px solid #006D3A; background:#7FF8A8; }
+  .hub-nav-item .ic { width:26px; height:26px; display:flex; align-items:center; justify-content:center; }
+  .hub-nav-item .lbl { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:.02em; line-height:1.15; }
+
+  .hub-footer-item { display:flex; flex-direction:column; align-items:center; gap:4px; padding:10px 6px; cursor:pointer; color:#727785; text-align:center; }
+  .hub-footer-item:hover { color:#BA1A1A; }
+  .hub-footer-item .lbl { font-size:8.5px; font-weight:700; text-transform:uppercase; letter-spacing:.03em; }
+
+  #hub-main { flex:1; position:relative; background:#FFFFFF; }
+  .hub-frame-wrap { position:absolute; inset:0; display:none; }
+  .hub-frame-wrap.active { display:block; }
+  .hub-frame-wrap iframe { width:100%; height:100%; border:0; display:block; background:#fff; }
+  .hub-loading { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:#727785; font-size:13px; font-family: system-ui, sans-serif; gap:10px; }
+  .hub-loading .spin { width:18px;height:18px;border-radius:50%;border:2px solid #C1C6D6;border-top-color:#005BBF; animation:hubspin .8s linear infinite; }
+  @keyframes hubspin { to { transform: rotate(360deg); } }
+
+  .hub-placeholder { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; color:#414754; font-family: system-ui, sans-serif; text-align:center; padding:2rem; }
+  .hub-placeholder .material-symbols-outlined { font-size:56px; color:#9AA3AF; }
+  .hub-placeholder h2 { font-size:20px; font-weight:700; color:#181C20; margin:0; }
+  .hub-placeholder p { font-size:13.5px; color:#727785; max-width:360px; margin:0; }
+
+  #login-loading { display:none; }
+  #login-loading.show { display:flex; }
+</style>
+</head>
+<body class="font-body-md text-on-surface flex flex-col min-h-screen">
+
+<!-- ══════════ PANTALLA DE LOGIN ══════════ -->
+<main id="login-screen" class="flex-grow flex items-center justify-center px-4 py-12">
+<div class="login-card p-margin-desktop rounded-lg flex flex-col items-center">
+  <header class="text-center mb-4">
+    <div class="flex justify-center">
+      <img alt="Logo" class="w-auto" style="height:220px;" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAq2PgLP5eS8wUO0S5YxPyUqbkaIDRe5lEJeVNOcgz1fgdHH8a8HVnLqFcYDinES7ZXhqXUmSqp5Afw5-uQaci1Cdgyt700-iNe5QU-HEBS0TEQALRGgEV7hewF5u826Z5TqSUqAMYhtFmEUzbd0O1pupaw2uBAym0A7zoZWSwSHrnzTWI03DxbERNlw55P6s1M8jkkNMzJCCXFtpCfFQ6X_us3W3eJ-9MCgSL7CbRG2zNpcDNVUl3g-86fgR4s130Ix68"/>
+    </div>
+  </header>
+
+  <form id="login-form" class="w-full space-y-stack-md" autocomplete="on" onsubmit="return false;">
+    <div class="space-y-stack-sm">
+      <label class="block font-label-md text-label-md text-on-surface-variant" for="usuario">Usuario</label>
+      <div class="relative group input-focus-ring border border-outline-variant rounded-lg">
+        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-outline">
+          <span class="material-symbols-outlined text-[20px]">person</span>
+        </div>
+        <input class="w-full pl-10 pr-4 py-3 bg-surface-container-low rounded-lg font-body-md text-on-surface focus:outline-none border-0" id="usuario" name="username" placeholder="usuario" type="text" autocomplete="username"/>
+      </div>
+    </div>
+
+    <div class="space-y-stack-sm">
+      <label class="block font-label-md text-label-md text-on-surface-variant" for="contrasena">Contraseña</label>
+      <div class="relative group input-focus-ring border border-outline-variant rounded-lg">
+        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-outline">
+          <span class="material-symbols-outlined text-[20px]">lock</span>
+        </div>
+        <input class="w-full pl-10 pr-10 py-3 bg-surface-container-low rounded-lg font-body-md text-on-surface focus:outline-none border-0" id="contrasena" name="password" placeholder="••••••••" type="password" autocomplete="current-password"/>
+        <button class="absolute inset-y-0 right-0 pr-3 flex items-center text-outline hover:text-primary transition-colors" type="button" id="toggle-pass">
+          <span class="material-symbols-outlined text-[20px]">visibility</span>
+        </button>
+      </div>
+    </div>
+
+    <p id="login-error" class="hidden font-label-sm text-label-sm text-error text-center">Usuario o contraseña incorrectos.</p>
+
+    <div class="pt-4">
+      <button id="login-btn" class="w-full bg-primary-container text-on-primary py-4 px-6 rounded-lg font-label-md text-label-md shadow-none hover:bg-primary transition-all active:scale-[0.98] flex justify-center items-center gap-2" type="submit">
+        <span id="login-loading" class="items-center gap-2">
+          <span class="inline-block w-4 h-4 border-2 border-white/60 border-t-white rounded-full animate-spin"></span>
+          Verificando…
+        </span>
+        <span id="login-btn-label" class="flex items-center gap-2">
+          <span>Iniciar Sesión</span>
+          <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+        </span>
+      </button>
+    </div>
+  </form>
+</div>
+</main>
+
+<footer id="login-footer" class="w-full px-margin-desktop py-gutter flex flex-col md:flex-row justify-between items-center bg-surface border-t border-outline-variant gap-2">
+  <div class="font-label-sm text-label-sm text-on-surface-variant text-center md:text-left">
+    Omar's Semi-Automated Warehouse Management System
+  </div>
+  <div class="font-label-sm text-label-sm text-on-surface-variant text-center md:text-right">
+    Acceso por roles — cada usuario ve solo lo que le corresponde.
+  </div>
+</footer>
+
+<!-- ══════════ HUB (post-login) ══════════ -->
+<div id="hub-app">
+  <aside id="hub-sidebar">
+    <div class="hub-brand">
+      <div class="dot"></div>
+      <span>PANEL</span>
+    </div>
+    <div class="hub-user-tag">
+      <div class="name" id="hub-user-name">—</div>
+      <div class="role" id="hub-user-role">—</div>
+    </div>
+    <nav id="hub-nav" style="flex:1;"></nav>
+    <div class="hub-footer-item" onclick="hubLogout()" title="Cerrar sesión">
+      <span class="material-symbols-outlined" style="font-size:20px;">logout</span>
+      <div class="lbl">Salir</div>
+    </div>
+  </aside>
+
+  <main id="hub-main"></main>
+</div>
+
+<script>
+(function(){
+  // ═══════════════════════════════════════════════════════════
+  // CONFIGURACION — pega aqui los links "publicar en la web" (CSV) de tus 2 hojas
+  // ═══════════════════════════════════════════════════════════
+  const USUARIOS_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQJG_mh5j1A3OhOpJNoRzmL5LjpiGhQymjQgKdzk6f7C6w-DoGmbgDNjuhDgjqHpKSYI-mLH_J41oWf/pub?gid=1285470470&single=true&output=csv';
+  const ROLES_CSV    = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQJG_mh5j1A3OhOpJNoRzmL5LjpiGhQymjQgKdzk6f7C6w-DoGmbgDNjuhDgjqHpKSYI-mLH_J41oWf/pub?gid=1082263804&single=true&output=csv';
+
+  // Cada seccion: la CLAVE es el nombre de columna en la hoja ROLES (mismo texto exacto, sin importar mayus/minus).
+  // Si la columna no existe en tu hoja ROLES, esa seccion simplemente no aparece para nadie.
+  const SECTIONS = {
+    SALDO_KAMILL:            { label: 'Saldo Kamill',       icon: 'inventory_2',       url: 'https://bernalesomard-beep.github.io/Kamill_AppSheet/' },
+    PEDIDOS_KAMILL:          { label: 'Pedidos Kamill',     icon: 'local_shipping',    url: 'https://bernalesomard-beep.github.io/Control_Bultos/' },
+    INGRESOS_KAMILL:         { label: 'Ingresos Kamill',    icon: 'move_to_inbox',     url: 'https://bernalesomard-beep.github.io/INGRESOS_KAMILL/' },
+    SALDO_DERMODIS:          { label: 'Saldo Dermodis',     icon: 'inventory_2',       url: 'https://bernalesomard-beep.github.io/Dermodis_AppSheet/' },
+    PEDIDOS_DERMODIS:        { label: 'Pedidos Dermodis',   icon: 'local_shipping',    url: null },
+    INGRESOS_DERMODIS:       { label: 'Ingresos Dermodis',  icon: 'move_to_inbox',     url: 'https://bernalesomard-beep.github.io/AppsheetDermodisIN/' },
+    DEVOLUCIONES_DERMODIS:   { label: 'Devoluciones',       icon: 'assignment_return', url: null },
+    KPI_DERMODIS:            { label: 'KPI Dermodis',       icon: 'monitoring',        url: 'https://bernalesomard-beep.github.io/KPI_DERMODIS/' },
+    DATOS_LOGISTICO:         { label: 'Datos Logístico',    icon: 'database',          url: 'https://bernalesomard-beep.github.io/DATOS_LOGISTICO/' }
+  };
+
+  // ═══════════════════════════════════════════════════════════
+
+  const loginScreen  = document.getElementById('login-screen');
+  const loginFooter  = document.getElementById('login-footer');
+  const hubApp       = document.getElementById('hub-app');
+  const loginForm    = document.getElementById('login-form');
+  const loginError   = document.getElementById('login-error');
+  const loginLoading = document.getElementById('login-loading');
+  const loginBtnLbl  = document.getElementById('login-btn-label');
+  const loginBtn     = document.getElementById('login-btn');
+
+  // ── Parser CSV simple (soporta comillas) ──
+  function parseCSV(text) {
+    const rows = [];
+    let row = [], field = '', inQuotes = false;
+    for (let i = 0; i < text.length; i++) {
+      const c = text[i], n = text[i+1];
+      if (inQuotes) {
+        if (c === '"' && n === '"') { field += '"'; i++; }
+        else if (c === '"') { inQuotes = false; }
+        else { field += c; }
+      } else {
+        if (c === '"') inQuotes = true;
+        else if (c === ',') { row.push(field); field = ''; }
+        else if (c === '\r') { /* skip */ }
+        else if (c === '\n') { row.push(field); rows.push(row); row = []; field = ''; }
+        else field += c;
+      }
+    }
+    if (field.length || row.length) { row.push(field); rows.push(row); }
+    if (!rows.length) return [];
+    const headers = rows[0].map(h => h.trim());
+    return rows.slice(1).filter(r => r.some(v => (v||'').trim() !== '')).map(r => {
+      const obj = {};
+      headers.forEach((h, idx) => { obj[h] = (r[idx] !== undefined ? r[idx] : '').trim(); });
+      return obj;
+    });
+  }
+
+  async function fetchCSV(url) {
+    const res = await fetch(url + (url.includes('?') ? '&' : '?') + 'cb=' + Date.now());
+    if (!res.ok) throw new Error('No se pudo leer la hoja (' + res.status + ')');
+    return parseCSV(await res.text());
+  }
+
+  function setLoading(isLoading) {
+    if (isLoading) { loginLoading.classList.add('show','flex'); loginBtnLbl.classList.add('hidden'); loginBtn.disabled = true; }
+    else { loginLoading.classList.remove('show','flex'); loginBtnLbl.classList.remove('hidden'); loginBtn.disabled = false; }
+  }
+
+  async function attemptLogin() {
+    const uInput = document.getElementById('usuario');
+    const pInput = document.getElementById('contrasena');
+    const u = (uInput.value || '').trim().toLowerCase();
+    const p = (pInput.value || '').trim();
+    if (!u || !p) return;
+
+    loginError.classList.add('hidden');
+    setLoading(true);
+    try {
+      const usuarios = await fetchCSV(USUARIOS_CSV);
+      const match = usuarios.find(function (row) {
+        const rowUser = (row.USUARIO || row.usuario || '').trim().toLowerCase();
+        const rowPass = (row.CLAVE || row.clave || '').trim();
+        return rowUser === u && rowPass.toLowerCase() === p.toLowerCase();
+      });
+
+      if (!match) {
+        loginError.textContent = 'Usuario o contraseña incorrectos.';
+        loginError.classList.remove('hidden');
+        setLoading(false);
+        return;
+      }
+
+      const rolNombre = (match.ROL || match.rol || '').trim();
+      const roles = await fetchCSV(ROLES_CSV);
+      const rolRow = roles.find(function (row) {
+        return (row.ROL || row.rol || '').trim().toLowerCase() === rolNombre.toLowerCase();
+      });
+
+      if (!rolRow) {
+        loginError.textContent = 'Tu usuario no tiene un rol configurado correctamente. Contacta al administrador.';
+        loginError.classList.remove('hidden');
+        setLoading(false);
+        return;
+      }
+
+      const allowed = Object.keys(SECTIONS).filter(function (key) {
+        const val = (rolRow[key] || '').trim().toUpperCase();
+        return val === 'TRUE' || val === 'VERDADERO' || val === '1';
+      });
+
+      if (!allowed.length) {
+        loginError.textContent = 'Tu rol no tiene ninguna sección habilitada. Contacta al administrador.';
+        loginError.classList.remove('hidden');
+        setLoading(false);
+        return;
+      }
+
+      // Ofrecer al navegador guardar la contraseña (Chrome / Edge)
+      if (window.PasswordCredential) {
+        try {
+          const cred = new PasswordCredential({ id: u, password: p, name: u });
+          navigator.credentials.store(cred);
+        } catch (e) { /* navegador sin soporte, se ignora */ }
+      }
+
+      const session = { usuario: match.USUARIO || match.usuario, rol: rolNombre, allowed: allowed };
+      sessionStorage.setItem('panel_auth', JSON.stringify(session));
+      setLoading(false);
+      showHub(session);
+
+    } catch (err) {
+      console.error(err);
+      loginError.textContent = 'No se pudo verificar el acceso. Revisa tu conexión e intenta de nuevo.';
+      loginError.classList.remove('hidden');
+      setLoading(false);
+    }
+  }
+
+  loginForm.addEventListener('submit', function (e) { e.preventDefault(); attemptLogin(); });
+  loginBtn.addEventListener('click', function (e) { e.preventDefault(); attemptLogin(); });
+
+  document.getElementById('toggle-pass').addEventListener('click', function () {
+    const input = document.getElementById('contrasena');
+    const icon = this.querySelector('span');
+    const isPassword = input.type === 'password';
+    input.type = isPassword ? 'text' : 'password';
+    icon.textContent = isPassword ? 'visibility_off' : 'visibility';
+  });
+
+  // ── Hub ──
+  const loaded = {};
+
+  function mountFrame(key) {
+    const url = SECTIONS[key].url;
+    if (!url || loaded[key]) return;
+    loaded[key] = true;
+    const iframe = document.getElementById('frame-' + key);
+    iframe.addEventListener('load', function () {
+      const loadingEl = document.getElementById('loading-' + key);
+      if (loadingEl) loadingEl.style.display = 'none';
+    }, { once: true });
+    iframe.src = url;
+  }
+
+  function buildHub(session) {
+    const nav = document.getElementById('hub-nav');
+    const main = document.getElementById('hub-main');
+    nav.innerHTML = '';
+    main.innerHTML = '';
+
+    session.allowed.forEach(function (key, idx) {
+      const sec = SECTIONS[key];
+      if (!sec) return;
+
+      const navItem = document.createElement('div');
+      navItem.className = 'hub-nav-item' + (idx === 0 ? ' active' : '');
+      navItem.setAttribute('data-target', key);
+      navItem.onclick = function () { hubShow(key); };
+      navItem.innerHTML = '<div class="ic"><span class="material-symbols-outlined">' + sec.icon + '</span></div><div class="lbl">' + sec.label + '</div>';
+      nav.appendChild(navItem);
+
+      const wrap = document.createElement('div');
+      wrap.className = 'hub-frame-wrap' + (idx === 0 ? ' active' : '');
+      wrap.id = 'wrap-' + key;
+
+      if (sec.url) {
+        wrap.innerHTML = '<div class="hub-loading" id="loading-' + key + '"><div class="spin"></div>Cargando ' + sec.label + '…</div>'
+                        + '<iframe id="frame-' + key + '" title="' + sec.label + '"></iframe>';
+      } else {
+        wrap.innerHTML = '<div class="hub-placeholder"><span class="material-symbols-outlined">' + sec.icon + '</span>'
+                        + '<h2>' + sec.label + '</h2><p>Próximamente. Esta sección se habilitará cuando esté listo el enlace correspondiente.</p></div>';
+      }
+      main.appendChild(wrap);
+    });
+
+    document.getElementById('hub-user-name').textContent = session.usuario;
+    document.getElementById('hub-user-role').textContent = session.rol;
+
+    mountFrame(session.allowed[0]);
+  }
+
+  window.hubShow = function (key) {
+    document.querySelectorAll('.hub-frame-wrap').forEach(function (el) { el.classList.toggle('active', el.id === 'wrap-' + key); });
+    document.querySelectorAll('.hub-nav-item').forEach(function (el) { el.classList.toggle('active', el.getAttribute('data-target') === key); });
+    mountFrame(key);
+  };
+
+  window.hubLogout = function () {
+    sessionStorage.removeItem('panel_auth');
+    location.reload();
+  };
+
+  function showHub(session) {
+    loginScreen.classList.add('hide');
+    loginFooter.classList.add('hide');
+    hubApp.classList.add('show');
+    buildHub(session);
+  }
+
+  // Sesion ya iniciada en esta pestaña
+  const saved = sessionStorage.getItem('panel_auth');
+  if (saved) {
+    try { showHub(JSON.parse(saved)); } catch (e) { sessionStorage.removeItem('panel_auth'); }
+  }
+})();
+</script>
+</body>
+</html>

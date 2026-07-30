@@ -54,7 +54,11 @@ tailwind.config = {
   #hub-app.show { display:flex; }
   #login-screen.hide, #login-footer.hide { display:none; }
 
-  #hub-sidebar { width:90px; flex-shrink:0; background:#F1F4FA; border-right:1px solid #C1C6D6; display:flex; flex-direction:column; align-items:stretch; padding-top:14px; }
+  #hub-sidebar { width:90px; flex-shrink:0; background:#F1F4FA; border-right:1px solid #C1C6D6; display:flex; flex-direction:column; align-items:stretch; padding-top:14px; height:100vh; overflow:hidden; }
+  #hub-nav { flex:1; min-height:0; overflow-y:auto; overflow-x:hidden; scrollbar-width:thin; scrollbar-color:#C1C6D6 transparent; }
+  #hub-nav::-webkit-scrollbar { width:5px; }
+  #hub-nav::-webkit-scrollbar-thumb { background:#C1C6D6; border-radius:4px; }
+  #hub-nav::-webkit-scrollbar-track { background:transparent; }
   .hub-brand { text-align:center; padding:0 8px 14px 8px; border-bottom:1px solid #C1C6D6; margin-bottom:6px; }
   .hub-brand .dot { width:10px;height:10px;border-radius:50%;background:#FDBC13; margin:0 auto 6px auto; }
   .hub-brand span { color:#005BBF; font-size:9.5px; font-weight:700; letter-spacing:.04em; }

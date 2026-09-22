@@ -50,8 +50,8 @@ tailwind.config = {
   .input-focus-ring:focus-within { border-color: #34b3e8; border-width: 2px; }
   .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; vertical-align: middle; }
 
-  #hub-app { display:none; height:100vh; width:100vw; overflow:hidden; }
-  #hub-app.show { display:flex; }
+  #hub-app { display:none; height:100vh; width:100vw; overflow:hidden; position:relative; }
+  #hub-app.show { display:block; }
   #login-screen.hide, #login-footer.hide { display:none; }
 
   #hub-sidebar { width:90px; flex-shrink:0; background:#F1F4FA; border-right:1px solid #C1C6D6; display:flex; flex-direction:column; align-items:stretch; padding-top:14px; height:100vh; overflow:hidden; }
@@ -91,6 +91,50 @@ tailwind.config = {
 
   #login-loading { display:none; }
   #login-loading.show { display:flex; }
+
+  /* ── Home de categorías ── */
+  #hub-home, #hub-category { position:absolute; inset:0; display:none; }
+  #hub-home.active { display:flex; flex-direction:column; }
+  #hub-category.active { display:flex; flex-direction:row; }
+
+  #hub-home { background:#F1F4FA; overflow-y:auto; }
+  .hub-home-header { display:flex; align-items:center; justify-content:space-between; padding:18px 28px; border-bottom:1px solid #C1C6D6; background:#ffffff; flex-shrink:0; }
+  .hub-home-header .brand { display:flex; align-items:center; gap:8px; }
+  .hub-home-header .brand .dot { width:10px; height:10px; border-radius:50%; background:#FDBC13; }
+  .hub-home-header .brand span { color:#005BBF; font-size:12px; font-weight:700; letter-spacing:.04em; }
+  .hub-home-header .user-block { display:flex; align-items:center; gap:14px; }
+  .hub-home-header .user-block .name { font-size:13px; font-weight:700; color:#181C20; text-align:right; }
+  .hub-home-header .user-block .role { font-size:10.5px; color:#727785; text-transform:uppercase; letter-spacing:.03em; text-align:right; }
+  .hub-home-logout { display:flex; align-items:center; gap:4px; color:#727785; cursor:pointer; padding:8px 10px; border-radius:8px; transition: all .15s ease; font-size:12px; font-weight:700; }
+  .hub-home-logout:hover { color:#BA1A1A; background:#FDEDEC; }
+
+  .hub-home-intro { padding:26px 28px 4px 28px; }
+  .hub-home-intro h1 { font-family:'Hanken Grotesk',sans-serif; font-size:24px; font-weight:700; color:#181C20; margin:0 0 4px 0; }
+  .hub-home-intro p { font-size:13.5px; color:#727785; margin:0; }
+
+  .hub-home-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(190px,1fr)); gap:20px; padding:22px 28px 36px 28px; }
+  .hub-home-card { position:relative; border-radius:18px; padding:22px 18px; min-height:150px; display:flex; flex-direction:column; justify-content:space-between; cursor:pointer; overflow:hidden; box-shadow:0 4px 14px rgba(11,28,48,0.12); transition: transform .18s ease, box-shadow .18s ease; background-size:cover; background-position:center; }
+  .hub-home-card::after { content:''; position:absolute; inset:0; background:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.28) 100%); }
+  .hub-home-card:hover { transform:translateY(-5px) scale(1.015); box-shadow:0 10px 22px rgba(11,28,48,0.22); }
+  .hub-home-card .hc-icon { position:relative; z-index:1; width:44px; height:44px; border-radius:12px; background:rgba(255,255,255,0.22); backdrop-filter:blur(2px); display:flex; align-items:center; justify-content:center; }
+  .hub-home-card .hc-icon .material-symbols-outlined { color:#fff; font-size:24px; }
+  .hub-home-card .hc-label { position:relative; z-index:1; color:#fff; font-family:'Hanken Grotesk',sans-serif; font-size:18px; font-weight:700; line-height:1.2; }
+  .hub-home-card .hc-sub { position:relative; z-index:1; color:rgba(255,255,255,0.88); font-size:11.5px; font-weight:600; text-transform:uppercase; letter-spacing:.03em; display:flex; align-items:center; gap:4px; }
+  .hub-home-card.disabled { cursor:not-allowed; filter:grayscale(0.65); opacity:.55; }
+  .hub-home-card.disabled:hover { transform:none; box-shadow:0 4px 14px rgba(11,28,48,0.12); }
+
+  /* ── Vista de categoría (sidebar + iframe) ── */
+  .hub-back-btn { display:flex; flex-direction:column; align-items:center; gap:4px; padding:14px 6px 10px 6px; cursor:pointer; color:#005BBF; text-align:center; border-bottom:1px solid #C1C6D6; margin-bottom:4px; }
+  .hub-back-btn:hover { background:#E5E8EE; }
+  .hub-back-btn .lbl { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:.02em; }
+  .hub-cat-badge { text-align:center; padding:4px 6px 12px 6px; border-bottom:1px solid #C1C6D6; margin-bottom:6px; }
+  .hub-cat-badge .lbl { font-size:10.5px; font-weight:700; color:#181C20; text-transform:uppercase; letter-spacing:.03em; }
+  .hub-nav-group, .hub-main-group { display:none; }
+  .hub-nav-group.active { display:block; }
+  .hub-main-group.active { display:block; position:absolute; inset:0; }
+  #hub-main-container { flex:1; position:relative; background:#FFFFFF; }
+  .hub-empty-cat { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px; color:#727785; font-family: system-ui, sans-serif; text-align:center; padding:2rem; }
+  .hub-empty-cat .material-symbols-outlined { font-size:48px; color:#9AA3AF; }
 </style>
 </head>
 <body class="font-body-md text-on-surface flex flex-col min-h-screen">
@@ -157,23 +201,46 @@ tailwind.config = {
 
 <!-- ══════════ HUB (post-login) ══════════ -->
 <div id="hub-app">
-  <aside id="hub-sidebar">
-    <div class="hub-brand">
-      <div class="dot"></div>
-      <span>PANEL</span>
-    </div>
-    <div class="hub-user-tag">
-      <div class="name" id="hub-user-name">—</div>
-      <div class="role" id="hub-user-role">—</div>
-    </div>
-    <nav id="hub-nav" style="flex:1;"></nav>
-    <div class="hub-footer-item" onclick="hubLogout()" title="Cerrar sesión">
-      <span class="material-symbols-outlined" style="font-size:20px;">logout</span>
-      <div class="lbl">Salir</div>
-    </div>
-  </aside>
 
-  <main id="hub-main"></main>
+  <!-- HOME: tarjetas por categoría -->
+  <div id="hub-home">
+    <header class="hub-home-header">
+      <div class="brand"><div class="dot"></div><span>PANEL</span></div>
+      <div class="user-block">
+        <div>
+          <div class="name" id="home-user-name">—</div>
+          <div class="role" id="home-user-role">—</div>
+        </div>
+        <div class="hub-home-logout" onclick="hubLogout()" title="Cerrar sesión">
+          <span class="material-symbols-outlined" style="font-size:18px;">logout</span> Salir
+        </div>
+      </div>
+    </header>
+    <div class="hub-home-intro">
+      <h1 id="hub-home-greeting">¿A dónde quieres ir?</h1>
+      <p>Selecciona una categoría para ver sus secciones.</p>
+    </div>
+    <div class="hub-home-grid" id="hub-home-grid"></div>
+  </div>
+
+  <!-- VISTA DE CATEGORÍA: sidebar + iframes -->
+  <div id="hub-category">
+    <aside id="hub-sidebar">
+      <div class="hub-back-btn" onclick="hubGoHome()" title="Volver al inicio">
+        <span class="material-symbols-outlined" style="font-size:22px;">arrow_back</span>
+        <div class="lbl">Volver</div>
+      </div>
+      <div class="hub-cat-badge"><div class="lbl" id="hub-cat-title">—</div></div>
+      <div id="hub-nav-container" style="flex:1; min-height:0; overflow-y:auto; overflow-x:hidden; scrollbar-width:thin; scrollbar-color:#C1C6D6 transparent;"></div>
+      <div class="hub-footer-item" onclick="hubLogout()" title="Cerrar sesión">
+        <span class="material-symbols-outlined" style="font-size:20px;">logout</span>
+        <div class="lbl">Salir</div>
+      </div>
+    </aside>
+
+    <main id="hub-main-container"></main>
+  </div>
+
 </div>
 
 <script>
@@ -187,21 +254,32 @@ tailwind.config = {
   // Cada seccion: la CLAVE es el nombre de columna en la hoja ROLES (mismo texto exacto, sin importar mayus/minus).
   // Si la columna no existe en tu hoja ROLES, esa seccion simplemente no aparece para nadie.
   const SECTIONS = {
-    SALDO_KAMILL:            { label: 'Saldo Kamill',       icon: 'inventory_2',       url: 'https://bernalesomard-beep.github.io/Kamill_AppSheet/' },
-    PEDIDOS_KAMILL:          { label: 'Pedidos Kamill',     icon: 'local_shipping',    url: 'https://bernalesomard-beep.github.io/Control_Bultos/' },
-    INGRESOS_KAMILL:         { label: 'Ingresos Kamill',    icon: 'move_to_inbox',     url: 'https://bernalesomard-beep.github.io/INGRESOS_KAMILL/' },
-    OTIF_KAMILL:             { label: 'OTIF Kamill',        icon: 'monitoring',        url: 'https://bernalesomard-beep.github.io/OTIF_KAMILL_271_V2/' },
-    GENERADOR_ORD_KAMILL:    { label: 'Generador Ord',      icon: 'note_add',          url: 'https://bernalesomard-beep.github.io/GENERADOR_271/' },
-    SALDO_DERMODIS:          { label: 'Saldo Dermodis',     icon: 'inventory_2',       url: 'https://bernalesomard-beep.github.io/Dermodis_AppSheet/' },
-    PEDIDOS_DERMODIS:        { label: 'Pedidos Dermodis',   icon: 'local_shipping',    url: null },
-    INGRESOS_DERMODIS:       { label: 'Ingresos Dermodis',  icon: 'move_to_inbox',     url: 'https://bernalesomard-beep.github.io/AppsheetDermodisIN/' },
-    DEVOLUCIONES_DERMODIS:   { label: 'Devoluciones',       icon: 'assignment_return', url: 'https://bernalesomard-beep.github.io/DEVOLUCIONES_DERMODIS/' },
-    KPI_DERMODIS:            { label: 'KPI Dermodis',       icon: 'monitoring',        url: 'https://bernalesomard-beep.github.io/KPI_DERMODIS/' },
-    DATOS_LOGISTICO:         { label: 'Datos Logístico',    icon: 'database',          url: 'https://bernalesomard-beep.github.io/DATOS_LOGISTICO/' },
-    SALDO_GLIMMER:           { label: 'Saldo Glimmer',      icon: 'inventory_2',       url: 'https://bernalesomard-beep.github.io/saldo_glimmer/' },
-    GENERADOR_ORD_GLIMMER:   { label: 'Generador Ord',      icon: 'note_add',          url: 'https://bernalesomard-beep.github.io/GENERADOR_254/' },
-    GENERADOR_ASN_GLIMMER:   { label: 'Generador ASN',      icon: 'playlist_add_check',url: 'https://bernalesomard-beep.github.io/GENERADOR_ASN_254/' }
+    SALDO_KAMILL:            { label: 'Saldo Kamill',       icon: 'inventory_2',       url: 'https://bernalesomard-beep.github.io/Kamill_AppSheet/',      group: 'KAMILL' },
+    PEDIDOS_KAMILL:          { label: 'Pedidos Kamill',     icon: 'local_shipping',    url: 'https://bernalesomard-beep.github.io/Control_Bultos/',       group: 'KAMILL' },
+    INGRESOS_KAMILL:         { label: 'Ingresos Kamill',    icon: 'move_to_inbox',     url: 'https://bernalesomard-beep.github.io/INGRESOS_KAMILL/',      group: 'KAMILL' },
+    OTIF_KAMILL:             { label: 'OTIF Kamill',        icon: 'monitoring',        url: 'https://bernalesomard-beep.github.io/OTIF_KAMILL_271_V2/',   group: 'KAMILL' },
+    GENERADOR_ORD_KAMILL:    { label: 'Generador Ord',      icon: 'note_add',          url: 'https://bernalesomard-beep.github.io/GENERADOR_271/',        group: 'KAMILL' },
+    SALDO_DERMODIS:          { label: 'Saldo Dermodis',     icon: 'inventory_2',       url: 'https://bernalesomard-beep.github.io/Dermodis_AppSheet/',    group: 'DERMODIS' },
+    PEDIDOS_DERMODIS:        { label: 'Pedidos Dermodis',   icon: 'local_shipping',    url: null,                                                           group: 'DERMODIS' },
+    INGRESOS_DERMODIS:       { label: 'Ingresos Dermodis',  icon: 'move_to_inbox',     url: 'https://bernalesomard-beep.github.io/AppsheetDermodisIN/',   group: 'DERMODIS' },
+    DEVOLUCIONES_DERMODIS:   { label: 'Devoluciones',       icon: 'assignment_return', url: 'https://bernalesomard-beep.github.io/DEVOLUCIONES_DERMODIS/',group: 'DERMODIS' },
+    KPI_DERMODIS:            { label: 'KPI Dermodis',       icon: 'monitoring',        url: 'https://bernalesomard-beep.github.io/KPI_DERMODIS/',         group: 'DERMODIS' },
+    DATOS_LOGISTICO:         { label: 'Datos Logístico',    icon: 'database',          url: 'https://bernalesomard-beep.github.io/DATOS_LOGISTICO/',      group: 'DESPACHO' },
+    SALDO_GLIMMER:           { label: 'Saldo Glimmer',      icon: 'inventory_2',       url: 'https://bernalesomard-beep.github.io/saldo_glimmer/',        group: 'GLIMMER' },
+    GENERADOR_ORD_GLIMMER:   { label: 'Generador Ord',      icon: 'note_add',          url: 'https://bernalesomard-beep.github.io/GENERADOR_254/',        group: 'GLIMMER' },
+    GENERADOR_ASN_GLIMMER:   { label: 'Generador ASN',      icon: 'playlist_add_check',url: 'https://bernalesomard-beep.github.io/GENERADOR_ASN_254/',    group: 'GLIMMER' }
   };
+
+  // Categorías del home. "image" es opcional: si algún día tienes el logo real de la marca,
+  // pon aquí la URL de la imagen y se usará de fondo en vez del degradado de color.
+  const GROUPS = {
+    KAMILL:    { label: 'Kamill',    icon: 'inventory_2',    gradient: 'linear-gradient(135deg,#22b8f0,#0369a1)', image: null },
+    GLIMMER:   { label: 'Glimmer',   icon: 'auto_awesome',   gradient: 'linear-gradient(135deg,#f6c453,#b45309)', image: null },
+    DERMODIS:  { label: 'Dermodis',  icon: 'spa',            gradient: 'linear-gradient(135deg,#c084fc,#6d28d9)', image: null },
+    DESPACHO:  { label: 'Despacho',  icon: 'local_shipping', gradient: 'linear-gradient(135deg,#2dd4bf,#065f46)', image: null },
+    RECEPCION: { label: 'Recepción', icon: 'move_to_inbox',  gradient: 'linear-gradient(135deg,#fb923c,#c2410c)', image: null }
+  };
+  const GROUP_ORDER = ['KAMILL', 'GLIMMER', 'DERMODIS', 'DESPACHO', 'RECEPCION'];
 
   // ═══════════════════════════════════════════════════════════
 
@@ -349,42 +427,106 @@ tailwind.config = {
     iframe.src = url;
   }
 
+  let currentGroup = null;
+
   function buildHub(session) {
-    const nav = document.getElementById('hub-nav');
-    const main = document.getElementById('hub-main');
-    nav.innerHTML = '';
-    main.innerHTML = '';
+    // ── Home: una tarjeta por categoría ──
+    const grid = document.getElementById('hub-home-grid');
+    grid.innerHTML = '';
 
-    session.allowed.forEach(function (key, idx) {
-      const sec = SECTIONS[key];
-      if (!sec) return;
+    document.getElementById('home-user-name').textContent = session.usuario;
+    document.getElementById('home-user-role').textContent = session.rol;
+    document.getElementById('hub-home-greeting').textContent = '¿A dónde quieres ir, ' + (session.usuario || '').split(/[.\s_]/)[0] + '?';
 
-      const navItem = document.createElement('div');
-      navItem.className = 'hub-nav-item' + (idx === 0 ? ' active' : '');
-      navItem.setAttribute('data-target', key);
-      navItem.onclick = function () { hubShow(key); };
-      navItem.innerHTML = '<div class="ic"><span class="material-symbols-outlined">' + sec.icon + '</span></div><div class="lbl">' + sec.label + '</div>';
-      nav.appendChild(navItem);
+    const navContainer = document.getElementById('hub-nav-container');
+    const mainContainer = document.getElementById('hub-main-container');
+    navContainer.innerHTML = '';
+    mainContainer.innerHTML = '';
 
-      const wrap = document.createElement('div');
-      wrap.className = 'hub-frame-wrap' + (idx === 0 ? ' active' : '');
-      wrap.id = 'wrap-' + key;
+    GROUP_ORDER.forEach(function (groupKey) {
+      const grp = GROUPS[groupKey];
+      const sectionsInGroup = session.allowed.filter(function (key) {
+        return SECTIONS[key] && SECTIONS[key].group === groupKey;
+      });
 
-      if (sec.url) {
-        wrap.innerHTML = '<div class="hub-loading" id="loading-' + key + '"><div class="spin"></div>Cargando ' + sec.label + '…</div>'
-                        + '<iframe id="frame-' + key + '" title="' + sec.label + '"></iframe>';
-      } else {
-        wrap.innerHTML = '<div class="hub-placeholder"><span class="material-symbols-outlined">' + sec.icon + '</span>'
-                        + '<h2>' + sec.label + '</h2><p>Próximamente. Esta sección se habilitará cuando esté listo el enlace correspondiente.</p></div>';
+      const card = document.createElement('div');
+      card.className = 'hub-home-card' + (sectionsInGroup.length ? '' : ' disabled');
+      if (grp.image) { card.style.backgroundImage = "url('" + grp.image + "')"; }
+      else { card.style.background = grp.gradient; }
+
+      const countLbl = sectionsInGroup.length
+        ? (sectionsInGroup.length + (sectionsInGroup.length === 1 ? ' sección' : ' secciones'))
+        : 'Sin acceso';
+      const countIcon = sectionsInGroup.length ? 'chevron_right' : 'lock';
+
+      card.innerHTML = '<div class="hc-icon"><span class="material-symbols-outlined">' + grp.icon + '</span></div>'
+                      + '<div><div class="hc-label">' + grp.label + '</div>'
+                      + '<div class="hc-sub">' + countLbl + ' <span class="material-symbols-outlined" style="font-size:14px;">' + countIcon + '</span></div></div>';
+
+      if (sectionsInGroup.length) {
+        card.onclick = function () { hubOpenCategory(groupKey, sectionsInGroup); };
       }
-      main.appendChild(wrap);
+      grid.appendChild(card);
+
+      // ── Nav + iframes de esa categoría (construidos una sola vez, se muestran/ocultan) ──
+      const navGroup = document.createElement('nav');
+      navGroup.className = 'hub-nav-group';
+      navGroup.setAttribute('data-group', groupKey);
+
+      const mainGroup = document.createElement('div');
+      mainGroup.className = 'hub-main-group';
+      mainGroup.setAttribute('data-group', groupKey);
+
+      if (!sectionsInGroup.length) {
+        mainGroup.innerHTML = '<div class="hub-empty-cat"><span class="material-symbols-outlined">lock</span><p>No tienes secciones asignadas en esta categoría.</p></div>';
+      } else {
+        sectionsInGroup.forEach(function (key, idx) {
+          const sec = SECTIONS[key];
+
+          const navItem = document.createElement('div');
+          navItem.className = 'hub-nav-item' + (idx === 0 ? ' active' : '');
+          navItem.setAttribute('data-target', key);
+          navItem.onclick = function () { hubShow(key); };
+          navItem.innerHTML = '<div class="ic"><span class="material-symbols-outlined">' + sec.icon + '</span></div><div class="lbl">' + sec.label + '</div>';
+          navGroup.appendChild(navItem);
+
+          const wrap = document.createElement('div');
+          wrap.className = 'hub-frame-wrap' + (idx === 0 ? ' active' : '');
+          wrap.id = 'wrap-' + key;
+
+          if (sec.url) {
+            wrap.innerHTML = '<div class="hub-loading" id="loading-' + key + '"><div class="spin"></div>Cargando ' + sec.label + '…</div>'
+                            + '<iframe id="frame-' + key + '" title="' + sec.label + '"></iframe>';
+          } else {
+            wrap.innerHTML = '<div class="hub-placeholder"><span class="material-symbols-outlined">' + sec.icon + '</span>'
+                            + '<h2>' + sec.label + '</h2><p>Próximamente. Esta sección se habilitará cuando esté listo el enlace correspondiente.</p></div>';
+          }
+          mainGroup.appendChild(wrap);
+        });
+      }
+
+      navContainer.appendChild(navGroup);
+      mainContainer.appendChild(mainGroup);
     });
-
-    document.getElementById('hub-user-name').textContent = session.usuario;
-    document.getElementById('hub-user-role').textContent = session.rol;
-
-    mountFrame(session.allowed[0]);
   }
+
+  window.hubOpenCategory = function (groupKey, sectionsInGroup) {
+    currentGroup = groupKey;
+    document.getElementById('hub-cat-title').textContent = GROUPS[groupKey].label;
+    document.querySelectorAll('.hub-nav-group').forEach(function (el) { el.classList.toggle('active', el.getAttribute('data-group') === groupKey); });
+    document.querySelectorAll('.hub-main-group').forEach(function (el) { el.classList.toggle('active', el.getAttribute('data-group') === groupKey); });
+
+    document.getElementById('hub-home').classList.remove('active');
+    document.getElementById('hub-category').classList.add('active');
+
+    if (sectionsInGroup && sectionsInGroup.length) mountFrame(sectionsInGroup[0]);
+  };
+
+  window.hubGoHome = function () {
+    currentGroup = null;
+    document.getElementById('hub-category').classList.remove('active');
+    document.getElementById('hub-home').classList.add('active');
+  };
 
   window.hubShow = function (key) {
     document.querySelectorAll('.hub-frame-wrap').forEach(function (el) { el.classList.toggle('active', el.id === 'wrap-' + key); });
@@ -402,6 +544,7 @@ tailwind.config = {
     loginFooter.classList.add('hide');
     hubApp.classList.add('show');
     buildHub(session);
+    document.getElementById('hub-home').classList.add('active');
   }
 
   // Sesion ya iniciada en esta pestaña

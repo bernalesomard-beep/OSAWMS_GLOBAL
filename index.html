@@ -150,6 +150,14 @@ tailwind.config = {
   #hub-main-container { flex:1; position:relative; background:#FFFFFF; margin-left:64px; }
   .hub-empty-cat { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px; color:#727785; font-family: system-ui, sans-serif; text-align:center; padding:2rem; }
   .hub-empty-cat .material-symbols-outlined { font-size:48px; color:#9AA3AF; }
+
+  /* ── Botón Sequel (acceso rápido) ── */
+  .btn-sequel { display:inline-flex; align-items:center; gap:6px; cursor:pointer; border:1px solid #C1C6D6; background:#fff; color:#005BBF; font-size:12px; font-weight:700; padding:7px 12px; border-radius:8px; transition:all .15s ease; font-family:inherit; white-space:nowrap; }
+  .btn-sequel:hover { background:#005BBF; border-color:#005BBF; color:#fff; }
+  .btn-sequel .material-symbols-outlined { font-size:18px; }
+  #hub-topbar { position:absolute; top:0; left:64px; right:0; height:38px; z-index:20; display:flex; align-items:center; justify-content:flex-end; gap:10px; padding:0 14px; background:#F1F4FA; border-bottom:1px solid #C1C6D6; box-sizing:border-box; }
+  #hub-topbar .btn-sequel { padding:4px 10px; }
+  #hub-main-container { margin-top:38px; }
 </style>
 </head>
 <body class="font-body-md text-on-surface flex flex-col min-h-screen">
@@ -222,6 +230,9 @@ tailwind.config = {
     <header class="hub-home-header">
       <div class="brand"><div class="dot"></div><span>PANEL</span></div>
       <div class="user-block">
+        <button type="button" class="btn-sequel" onclick="abrirSequel()" title="Abrir Sequel (SIGNIA) en una ventana nueva">
+          <span class="material-symbols-outlined">manage_search</span> Sequel
+        </button>
         <div>
           <div class="name" id="home-user-name">—</div>
           <div class="role" id="home-user-role">—</div>
@@ -252,6 +263,12 @@ tailwind.config = {
         <div class="lbl">Salir</div>
       </div>
     </aside>
+
+    <div id="hub-topbar">
+      <button type="button" class="btn-sequel" onclick="abrirSequel()" title="Abrir Sequel (SIGNIA) en una ventana nueva">
+        <span class="material-symbols-outlined">manage_search</span> Sequel
+      </button>
+    </div>
 
     <main id="hub-main-container"></main>
   </div>
@@ -552,6 +569,21 @@ tailwind.config = {
     document.querySelectorAll('.hub-frame-wrap').forEach(function (el) { el.classList.toggle('active', el.id === 'wrap-' + uid); });
     document.querySelectorAll('.hub-nav-item').forEach(function (el) { el.classList.toggle('active', el.getAttribute('data-target') === uid); });
     mountFrame(uid, key);
+  };
+
+  // ── Sequel (SIGNIA): abre en ventana emergente, reutilizando la misma ventana ──
+  const SEQUEL_URL = 'http://172.23.1.83:400/SECURE/sequel/web/';
+  window.abrirSequel = function () {
+    const w = 1280, h = 800;
+    const left = Math.max(0, (screen.width  - w) / 2);
+    const top  = Math.max(0, (screen.height - h) / 2);
+    const win = window.open(SEQUEL_URL, 'sequel_win',
+      'width=' + w + ',height=' + h + ',left=' + left + ',top=' + top + ',resizable=yes,scrollbars=yes');
+    if (!win) {
+      alert('El navegador bloqueó la ventana emergente. Permite las ventanas emergentes para este sitio e inténtalo de nuevo.');
+    } else {
+      win.focus();
+    }
   };
 
   window.hubLogout = function () {

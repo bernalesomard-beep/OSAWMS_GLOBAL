@@ -159,15 +159,8 @@ tailwind.config = {
   #hub-topbar .btn-sequel { padding:4px 10px; }
   #hub-main-container { margin-top:38px; }
 
-  /* ── Menú de accesos ── */
-  .hub-home-header { position:relative; z-index:50; }
-  .acc-wrap { position:relative; display:inline-block; }
-  .acc-menu { display:none; position:absolute; right:0; top:calc(100% + 6px); min-width:270px; background:#fff; border:1px solid #C1C6D6; border-radius:10px; box-shadow:0 8px 24px rgba(11,28,48,0.18); padding:6px; z-index:60; }
-  .acc-menu.open { display:block; }
-  .acc-item { display:flex; align-items:center; gap:10px; width:100%; text-align:left; background:none; border:0; padding:9px 10px; border-radius:8px; cursor:pointer; font-size:13px; color:#181C20; font-family:inherit; }
-  .acc-item:hover { background:#F1F4FA; }
-  .acc-item .material-symbols-outlined { font-size:20px; color:#005BBF; }
-  .acc-item small { margin-left:auto; padding-left:10px; font-size:10px; color:#727785; text-transform:uppercase; letter-spacing:.03em; white-space:nowrap; }
+  /* ── Botones de acceso rápido ── */
+  .acc-bar { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
 </style>
 </head>
 <body class="font-body-md text-on-surface flex flex-col min-h-screen">
@@ -240,12 +233,7 @@ tailwind.config = {
     <header class="hub-home-header">
       <div class="brand"><div class="dot"></div><span>PANEL</span></div>
       <div class="user-block">
-        <div class="acc-wrap">
-          <button type="button" class="btn-sequel acc-toggle" onclick="toggleAccesos(event)" aria-haspopup="true" aria-expanded="false" title="Accesos directos">
-            <span class="material-symbols-outlined">apps</span> Accesos <span class="material-symbols-outlined">expand_more</span>
-          </button>
-          <div class="acc-menu" role="menu"></div>
-        </div>
+        <div class="acc-bar"></div>
         <div>
           <div class="name" id="home-user-name">—</div>
           <div class="role" id="home-user-role">—</div>
@@ -278,12 +266,7 @@ tailwind.config = {
     </aside>
 
     <div id="hub-topbar">
-      <div class="acc-wrap">
-        <button type="button" class="btn-sequel acc-toggle" onclick="toggleAccesos(event)" aria-haspopup="true" aria-expanded="false" title="Accesos directos">
-          <span class="material-symbols-outlined">apps</span> Accesos <span class="material-symbols-outlined">expand_more</span>
-        </button>
-        <div class="acc-menu" role="menu"></div>
-      </div>
+      <div class="acc-bar"></div>
     </div>
 
     <main id="hub-main-container"></main>
@@ -313,6 +296,7 @@ tailwind.config = {
     DEVOLUCIONES_DERMODIS:   { label: 'Devoluciones',       icon: 'assignment_return', url: 'https://bernalesomard-beep.github.io/DEVOLUCIONES_DERMODIS/',group: 'DERMODIS' },
     KPI_DERMODIS:            { label: 'KPI Dermodis',       icon: 'monitoring',        url: 'https://bernalesomard-beep.github.io/KPI_DERMODIS/',         group: 'DERMODIS' },
     DATOS_LOGISTICO:         { label: 'Datos Logístico',    icon: 'database',          url: 'https://bernalesomard-beep.github.io/DATOS_LOGISTICO/',      group: ['DESPACHO','RECEPCION'] },
+    CONTROL_INGRESOS:        { label: 'Control de Ingresos',icon: 'fact_check',        url: 'https://bernalesomard-beep.github.io/CONTROL_INGRESOS/',     group: 'RECEPCION' },
     SALDO_GLIMMER:           { label: 'Saldo Glimmer',      icon: 'inventory_2',       url: 'https://bernalesomard-beep.github.io/saldo_glimmer/',        group: 'GLIMMER' },
     GENERADOR_ORD_GLIMMER:   { label: 'Generador Ord',      icon: 'note_add',          url: 'https://bernalesomard-beep.github.io/GENERADOR_254/',        group: 'GLIMMER' },
     GENERADOR_ASN_GLIMMER:   { label: 'Generador ASN',      icon: 'playlist_add_check',url: 'https://bernalesomard-beep.github.io/GENERADOR_ASN_254/',    group: 'GLIMMER' }
@@ -587,19 +571,18 @@ tailwind.config = {
     mountFrame(uid, key);
   };
 
-  // ── Accesos directos (menú superior) ──
-  // Para agregar o quitar un acceso, edita esta lista.
+  // ── Accesos directos (botones superiores) ──
+  // Para agregar o quitar un botón, edita esta lista.
   // modo: 'popup' = ventana emergente reutilizable | 'pestana' = pestaña nueva
   const ACCESOS = [
-    { nombre: 'Sequel SIGNIA',                url: 'http://172.23.1.83:400/SECURE/sequel/web/',          modo: 'popup',   icono: 'manage_search', interna: true  },
-    { nombre: 'Módulo de Distribución (MD)',  url: 'https://sls.signianet.pe/',                          modo: 'pestana', icono: 'local_shipping', interna: false },
-    { nombre: 'Control de Ausentismo',        url: 'http://signianet.com:85/webconsolidado/Login.aspx',  modo: 'pestana', icono: 'event_busy',     interna: false }
+    { etiqueta: 'Sequel',      nombre: 'Sequel SIGNIA (solo red interna)',  url: 'http://172.23.1.83:400/SECURE/sequel/web/',          modo: 'popup', icono: 'manage_search' },
+    { etiqueta: 'MD',          nombre: 'Módulo de Distribución',            url: 'https://sls.signianet.pe/',                          modo: 'popup', icono: 'local_shipping' },
+    { etiqueta: 'Ausentismo',  nombre: 'Control de Ausentismo',             url: 'http://signianet.com:85/webconsolidado/Login.aspx',  modo: 'popup', icono: 'event_busy' }
   ];
 
   window.abrirAcceso = function (i) {
     const a = ACCESOS[i];
     if (!a) return;
-    cerrarAccesos();
     if (a.modo === 'popup') {
       const w = 1280, h = 800;
       const left = Math.max(0, (screen.width  - w) / 2);
@@ -614,43 +597,21 @@ tailwind.config = {
     }
   };
 
-  function cerrarAccesos() {
-    document.querySelectorAll('.acc-menu.open').forEach(function (m) { m.classList.remove('open'); });
-    document.querySelectorAll('.acc-toggle').forEach(function (b) { b.setAttribute('aria-expanded', 'false'); });
-  }
-
-  window.toggleAccesos = function (ev) {
-    ev.stopPropagation();
-    const menu = ev.currentTarget.parentElement.querySelector('.acc-menu');
-    const abrir = !menu.classList.contains('open');
-    cerrarAccesos();
-    if (abrir) { menu.classList.add('open'); ev.currentTarget.setAttribute('aria-expanded', 'true'); }
-  };
-
-  document.querySelectorAll('.acc-menu').forEach(function (menu) {
+  document.querySelectorAll('.acc-bar').forEach(function (bar) {
     ACCESOS.forEach(function (a, i) {
       const btn = document.createElement('button');
       btn.type = 'button';
-      btn.className = 'acc-item';
-      btn.setAttribute('role', 'menuitem');
+      btn.className = 'btn-sequel';
+      btn.title = 'Abrir ' + a.nombre;
       const ic = document.createElement('span');
       ic.className = 'material-symbols-outlined';
       ic.textContent = a.icono;
-      const lb = document.createElement('span');
-      lb.textContent = a.nombre;
       btn.appendChild(ic);
-      btn.appendChild(lb);
-      if (a.interna) {
-        const tag = document.createElement('small');
-        tag.textContent = 'Red interna';
-        btn.appendChild(tag);
-      }
+      btn.appendChild(document.createTextNode(' ' + a.etiqueta));
       btn.addEventListener('click', function () { abrirAcceso(i); });
-      menu.appendChild(btn);
+      bar.appendChild(btn);
     });
   });
-  document.addEventListener('click', cerrarAccesos);
-  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') cerrarAccesos(); });
 
   window.hubLogout = function () {
     sessionStorage.removeItem('panel_auth');

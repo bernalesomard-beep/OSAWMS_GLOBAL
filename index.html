@@ -161,6 +161,26 @@ tailwind.config = {
 
   /* ── Botones de acceso rápido ── */
   .acc-bar { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+
+  /* ── Ocultar / mostrar barra superior y menú lateral ── */
+  #hub-sidebar { transition: width .18s ease, box-shadow .18s ease, transform .2s ease; }
+  #hub-category.side-hidden #hub-sidebar { transform:translateX(-100%); pointer-events:none; }
+  #hub-category.side-hidden #hub-main-container { margin-left:0; }
+  #hub-category.side-hidden #hub-topbar { left:0; }
+  #hub-category.top-hidden #hub-topbar { display:none; }
+  #hub-category.top-hidden #hub-main-container { margin-top:0; }
+  .hub-footer-item.neutral:hover { color:#005BBF; }
+  .hub-icon-btn { display:inline-flex; align-items:center; justify-content:center; width:28px; height:28px; padding:0; cursor:pointer; border:1px solid #C1C6D6; background:#fff; color:#727785; border-radius:8px; transition:all .15s ease; }
+  .hub-icon-btn:hover { background:#005BBF; border-color:#005BBF; color:#fff; }
+  .hub-icon-btn .material-symbols-outlined { font-size:18px; }
+  .hub-restore { display:none; position:absolute; z-index:25; align-items:center; justify-content:center; width:30px; height:30px; padding:0; cursor:pointer; border:1px solid #C1C6D6; background:rgba(255,255,255,0.94); color:#005BBF; border-radius:8px; box-shadow:0 2px 8px rgba(11,28,48,0.18); }
+  .hub-restore:hover { background:#005BBF; border-color:#005BBF; color:#fff; }
+  .hub-restore .material-symbols-outlined { font-size:20px; }
+  #hub-restore-top  { top:4px; right:14px; }
+  #hub-restore-side { left:4px; top:46px; }
+  #hub-category.top-hidden #hub-restore-top { display:inline-flex; }
+  #hub-category.side-hidden #hub-restore-side { display:inline-flex; }
+  #hub-category.top-hidden #hub-restore-side { top:4px; }
 </style>
 </head>
 <body class="font-body-md text-on-surface flex flex-col min-h-screen">
@@ -259,6 +279,10 @@ tailwind.config = {
       </div>
       <div class="hub-cat-badge"><div class="lbl" id="hub-cat-title">—</div></div>
       <div id="hub-nav-container" style="flex:1; min-height:0; overflow-y:auto; overflow-x:hidden; scrollbar-width:thin; scrollbar-color:#C1C6D6 transparent;"></div>
+      <div class="hub-footer-item neutral" onclick="hubToggleSide()" title="Ocultar menú lateral">
+        <span class="material-symbols-outlined" style="font-size:20px;">left_panel_close</span>
+        <div class="lbl">Ocultar menú</div>
+      </div>
       <div class="hub-footer-item" onclick="hubLogout()" title="Cerrar sesión">
         <span class="material-symbols-outlined" style="font-size:20px;">logout</span>
         <div class="lbl">Salir</div>
@@ -267,7 +291,16 @@ tailwind.config = {
 
     <div id="hub-topbar">
       <div class="acc-bar"></div>
+      <button type="button" class="hub-icon-btn" onclick="hubToggleTop()" title="Ocultar esta barra">
+        <span class="material-symbols-outlined">expand_less</span>
+      </button>
     </div>
+    <button type="button" id="hub-restore-top" class="hub-restore" onclick="hubToggleTop()" title="Mostrar barra superior">
+      <span class="material-symbols-outlined">expand_more</span>
+    </button>
+    <button type="button" id="hub-restore-side" class="hub-restore" onclick="hubToggleSide()" title="Mostrar menú lateral">
+      <span class="material-symbols-outlined">left_panel_open</span>
+    </button>
 
     <main id="hub-main-container"></main>
   </div>
@@ -290,6 +323,7 @@ tailwind.config = {
     INGRESOS_KAMILL:         { label: 'Ingresos Kamill',    icon: 'move_to_inbox',     url: 'https://bernalesomard-beep.github.io/INGRESOS_KAMILL/',      group: 'KAMILL' },
     OTIF_KAMILL:             { label: 'OTIF Kamill',        icon: 'monitoring',        url: 'https://bernalesomard-beep.github.io/OTIF_KAMILL_271_V2/',   group: 'KAMILL' },
     GENERADOR_ORD_KAMILL:    { label: 'Generador Ord',      icon: 'note_add',          url: 'https://bernalesomard-beep.github.io/GENERADOR_271/',        group: 'KAMILL' },
+    ASISTENCIA_KAMILL:       { label: 'Asistencia',         icon: 'badge',             url: 'https://bernalesomard-beep.github.io/Asistencia_OSAWMS/',    group: 'KAMILL' },
     SALDO_DERMODIS:          { label: 'Saldo Dermodis',     icon: 'inventory_2',       url: 'https://bernalesomard-beep.github.io/Dermodis_AppSheet/',    group: 'DERMODIS' },
     PEDIDOS_DERMODIS:        { label: 'Pedidos Dermodis',   icon: 'local_shipping',    url: null,                                                           group: 'DERMODIS' },
     INGRESOS_DERMODIS:       { label: 'Ingresos Dermodis',  icon: 'move_to_inbox',     url: 'https://bernalesomard-beep.github.io/AppsheetDermodisIN/',   group: 'DERMODIS' },
@@ -612,6 +646,20 @@ tailwind.config = {
       bar.appendChild(btn);
     });
   });
+
+// ── Ocultar / mostrar barra superior y menú lateral (se recuerda en este navegador) ──
+  const UI_KEY = 'hub_ui_prefs';
+  function uiCargar() { try { return JSON.parse(localStorage.getItem(UI_KEY)) || {}; } catch (e) { return {}; } }
+  function uiGuardar(p) { try { localStorage.setItem(UI_KEY, JSON.stringify(p)); } catch (e) {} }
+  function uiAplicar() {
+    const p = uiCargar();
+    const cat = document.getElementById('hub-category');
+    cat.classList.toggle('side-hidden', !!p.side);
+    cat.classList.toggle('top-hidden',  !!p.top);
+  }
+  window.hubToggleSide = function () { const p = uiCargar(); p.side = !p.side; uiGuardar(p); uiAplicar(); };
+  window.hubToggleTop  = function () { const p = uiCargar(); p.top  = !p.top;  uiGuardar(p); uiAplicar(); };
+  uiAplicar();
 
   window.hubLogout = function () {
     sessionStorage.removeItem('panel_auth');
